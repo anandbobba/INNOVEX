@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({ 
-  baseURL: import.meta.env.VITE_API_URL || 'https://innovex-backend.vercel.app/api',
+  baseURL: import.meta.env.VITE_API_URL || 'https://innovex-backend-2d5i.vercel.app/api',
   headers: {
     'Content-Type': 'application/json'
   }
