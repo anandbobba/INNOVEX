@@ -1,10 +1,7 @@
--- Drop existing tables if they exist
-DROP TABLE IF EXISTS scores CASCADE;
-DROP TABLE IF EXISTS judges CASCADE;
-DROP TABLE IF EXISTS teams CASCADE;
+-- Safe migration: Creates tables only if they don't exist, preserves data
 
--- Create teams table
-CREATE TABLE teams (
+-- Create teams table (if not exists)
+CREATE TABLE IF NOT EXISTS teams (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) UNIQUE NOT NULL,
   college VARCHAR(500),
@@ -12,8 +9,8 @@ CREATE TABLE teams (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create judges table
-CREATE TABLE judges (
+-- Create judges table (if not exists)
+CREATE TABLE IF NOT EXISTS judges (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -23,7 +20,9 @@ CREATE TABLE judges (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create scores table with session_type for mentoring/judging phases
+-- Drop and recreate scores table with CORRECT calculations
+DROP TABLE IF EXISTS scores CASCADE;
+
 CREATE TABLE scores (
   id SERIAL PRIMARY KEY,
   judge_id INTEGER REFERENCES judges(id) ON DELETE CASCADE,
@@ -45,6 +44,7 @@ CREATE TABLE scores (
       ELSE 0
     END
   ) STORED,
+  -- Final score as decimal for precise calculations
   final_score NUMERIC GENERATED ALWAYS AS (
     CASE 
       WHEN session_type = 'mentoring' THEN (innovation + creativity + feasibility + presentation)::numeric * 10
@@ -56,12 +56,16 @@ CREATE TABLE scores (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(judge_id, team_id, session_type)
-);-- Create indexes for better performance
-CREATE INDEX idx_scores_judge ON scores(judge_id);
-CREATE INDEX idx_scores_team ON scores(team_id);
-CREATE INDEX idx_judges_email ON judges(email);
+);
 
--- Create a view for aggregated results with mentoring and judging phases
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_scores_judge ON scores(judge_id);
+CREATE INDEX IF NOT EXISTS idx_scores_team ON scores(team_id);
+CREATE INDEX IF NOT EXISTS idx_judges_email ON judges(email);
+
+-- Drop and recreate the view with correct calculations
+DROP VIEW IF EXISTS team_results;
+
 CREATE OR REPLACE VIEW team_results AS
 SELECT 
   t.id as team_id,

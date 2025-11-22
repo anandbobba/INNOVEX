@@ -5,9 +5,19 @@ const bcrypt = require("bcryptjs");
 const { pool } = require("./api/db");
 
 async function migrate() {
-  console.log("🚀 Running migrations...");
+  // Check for --safe flag to use safe migration (preserves data)
+  const useSafeMigration = process.argv.includes('--safe');
+  
+  console.log(`🚀 Running ${useSafeMigration ? 'SAFE' : 'FRESH'} migrations...`);
+  
+  if (useSafeMigration) {
+    console.log("⚠️  Using safe migration - preserving existing teams and judges data");
+  } else {
+    console.log("⚠️  WARNING: This will DROP all tables and data! Use --safe flag to preserve data");
+  }
 
-  const sqlPath = path.join(__dirname, "migrations", "init.sql");
+  const sqlFile = useSafeMigration ? "safe-migrate.sql" : "init.sql";
+  const sqlPath = path.join(__dirname, "migrations", sqlFile);
   const sql = fs.readFileSync(sqlPath, "utf8");
   await pool.query(sql);
 
