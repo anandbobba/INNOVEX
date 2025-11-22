@@ -16,15 +16,15 @@
 - This was calculating: `(sum * 10) / 6 * 5` instead of proper scaling
 
 **Solution**: Fixed calculations:
-- **Mentoring**: 4 parameters out of 10 each = max 40 points → scaled to 400 points
-  - Formula: `(innovation + creativity + feasibility + presentation) × 10`
-  - Max score: 400
+- **Mentoring**: 4 parameters out of 10 each = max 40 points → average to 40 points
+  - Formula: `(innovation + creativity + feasibility + presentation) / 4`
+  - Max score: 40
   
-- **Judging**: 6 parameters out of 10 each = max 60 points → scaled to 500 points
-  - Formula: `(sum of 6 parameters) × 500 / 60`
-  - Max score: 500
+- **Judging**: 6 parameters out of 10 each = max 60 points → scaled to 50 points
+  - Formula: `(sum of 6 parameters) × 50 / 60`
+  - Max score: 50
 
-- **Total Score**: Mentoring (400) + Judging (500) = Maximum 900 points
+- **Total Score**: Mentoring (40) + Judging (50) = Maximum 90 points
 
 ### 3. **Marks Not Updating** ✅
 **Problem**: Generated columns (`total_score` and `final_score`) might not recalculate properly with the old incorrect formulas.
@@ -63,38 +63,38 @@ node migrate.js
 ### Mentoring Phase
 - **Parameters**: Innovation, Creativity, Feasibility, Presentation (4 total)
 - **Range**: Each 0-10
-- **Calculation**: Sum of 4 parameters × 10
-- **Max Score**: 40 × 10 = **400 points**
+- **Calculation**: Average of 4 parameters = (Sum / 4)
+- **Max Score**: (40 / 4) = **40 points**
 
 ### Judging Phase
 - **Parameters**: Innovation, Creativity, Feasibility, Presentation, Design, User Experience (6 total)
 - **Range**: Each 0-10
-- **Calculation**: (Sum of 6 parameters × 500) / 60
-- **Max Score**: (60 × 500) / 60 = **500 points**
+- **Calculation**: (Sum of 6 parameters × 50) / 60
+- **Max Score**: (60 × 50) / 60 = **50 points**
 
 ### Final Total Score
 - Mentoring Average + Judging Average
-- **Maximum Possible**: 400 + 500 = **900 points**
+- **Maximum Possible**: 40 + 50 = **90 points**
 
 ## Example Calculations
 
 ### Example 1: Perfect Scores
 **Mentoring**: Innovation=10, Creativity=10, Feasibility=10, Presentation=10
-- Score: (10+10+10+10) × 10 = **400 points**
+- Score: (10+10+10+10) / 4 = **40 points**
 
 **Judging**: All 6 parameters = 10
-- Score: (60 × 500) / 60 = **500 points**
+- Score: (60 × 50) / 60 = **50 points**
 
-**Total**: 400 + 500 = **900 points**
+**Total**: 40 + 50 = **90 points**
 
 ### Example 2: Mixed Scores
 **Mentoring**: Innovation=8, Creativity=7, Feasibility=9, Presentation=8
-- Score: (8+7+9+8) × 10 = **320 points**
+- Score: (8+7+9+8) / 4 = **32 points**
 
 **Judging**: Innovation=9, Creativity=8, Feasibility=8, Presentation=9, Design=7, UX=8
-- Score: (49 × 500) / 60 = **408.33 points**
+- Score: (49 × 50) / 60 = **40.83 points**
 
-**Total**: 320 + 408.33 = **728.33 points**
+**Total**: 32 + 40.83 = **72.83 points**
 
 ## Verifying the Migration
 

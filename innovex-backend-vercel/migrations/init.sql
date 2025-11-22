@@ -36,19 +36,19 @@ CREATE TABLE scores (
   design INTEGER CHECK (design >= 0 AND design <= 10),
   user_experience INTEGER CHECK (user_experience >= 0 AND user_experience <= 10),
   -- Correct calculation:
-  -- Mentoring: (4 parameters / 40) * 400 = total out of 400
-  -- Judging: (6 parameters / 60) * 500 = total out of 500
+  -- Mentoring: (4 parameters / 40) * 40 = total out of 40
+  -- Judging: (6 parameters / 60) * 50 = total out of 50
   total_score INTEGER GENERATED ALWAYS AS (
     CASE 
-      WHEN session_type = 'mentoring' THEN (innovation + creativity + feasibility + presentation) * 10
-      WHEN session_type = 'judging' THEN ROUND((innovation + creativity + feasibility + presentation + COALESCE(design, 0) + COALESCE(user_experience, 0))::numeric * 500.0 / 60.0)::integer
+      WHEN session_type = 'mentoring' THEN ROUND((innovation + creativity + feasibility + presentation)::numeric / 4.0)::integer
+      WHEN session_type = 'judging' THEN ROUND((innovation + creativity + feasibility + presentation + COALESCE(design, 0) + COALESCE(user_experience, 0))::numeric * 50.0 / 60.0)::integer
       ELSE 0
     END
   ) STORED,
   final_score NUMERIC GENERATED ALWAYS AS (
     CASE 
-      WHEN session_type = 'mentoring' THEN (innovation + creativity + feasibility + presentation)::numeric * 10
-      WHEN session_type = 'judging' THEN ROUND((innovation + creativity + feasibility + presentation + COALESCE(design, 0) + COALESCE(user_experience, 0))::numeric * 500.0 / 60.0, 2)
+      WHEN session_type = 'mentoring' THEN ROUND((innovation + creativity + feasibility + presentation)::numeric / 4.0, 2)
+      WHEN session_type = 'judging' THEN ROUND((innovation + creativity + feasibility + presentation + COALESCE(design, 0) + COALESCE(user_experience, 0))::numeric * 50.0 / 60.0, 2)
       ELSE 0
     END
   ) STORED,
